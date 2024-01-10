@@ -1,0 +1,60 @@
+---
+- name: Clean running docker node
+  docker_container:
+    name: '{{ docker_name }}'
+    state: absent
+  ignore_errors: yes
+
+- name: Create polimec user
+  ansible.builtin.user:
+    name: polimec
+    create_home: no
+    system: yes
+    shell: /sbin/nologin
+
+- name: Setup db path
+  file:
+    path: '{{ db_path }}'
+    state: directory
+    owner: polimec
+    group: polimec
+    recurse: yes
+
+- name: Setup binary path
+  file:
+    path: '/opt/{{ chain }}'
+    state: directory
+    owner: polimec
+    group: polimec
+    recurse: yes
+
+- name: Download polimec binary
+  ansible.builtin.get_url:
+    url: 'https://github.com/Polimec/polimec-binaries/releases/download/{{ version }}/polimec-parachain-node'
+    dest: '/opt/{{ chain }}/polimec-parachain-node'
+    mode: '0755'
+    owner: polimec
+    group: polimec
+
+- name: Download polimec chainspec
+  ansible.builtin.get_url:
+    url: 'https://raw.githubusercontent.com/Polimec/polimec-binaries/main/polimec-raw-chain-spec.json'
+    dest: '/opt/{{ chain }}/polimec-raw-chain-spec.json'
+    mode: '0755'
+    owner: polimec
+    group: polimec
+
+- name: Create service
+  template:
+    src: polimec-node.j2
+    dest: /etc/systemd/system/polimec-node.service
+    mode: 0644
+    owner: root
+    group: root
+
+- name: Start service
+  ansible.builtin.systemd:
+    name: polimec-node.service
+    state: restarted
+    enabled: yes
+    daemon_reload: yes

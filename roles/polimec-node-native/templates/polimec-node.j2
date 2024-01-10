@@ -1,0 +1,43 @@
+[Unit]
+Description={{ chain }} parachain full node
+After=network.target
+Requires=network.target
+
+[Service]
+Type=simple
+User=polimec
+Group=polimec
+RestartSec=5
+Restart=always
+Nice=0
+WorkingDirectory=/opt/{{ chain }}/
+ExecStart=/opt/{{ chain }}/polimec-parachain-node \
+    --base-path={{ db_path }} \
+    --chain=polimec-raw-chain-spec.json \
+    --name="{{ node_name }}" \
+    --port={{ p2p_listen }} \
+    --rpc-port={{ rpc_listen }} \
+    --collator \
+    --no-mdns \
+    --database=paritydb \
+    --no-private-ip \
+    --rpc-cors=all \
+    --pruning=archive \
+    --execution=wasm \
+    --wasm-execution=compiled \
+    --telemetry-url="wss://telemetry.polkadot.io/submit/ 1" \
+    --\
+    --port={{ p2p_relay_listen }} \
+    --name="{{ node_name }} relay" \
+    --rpc-port={{ rpc_relay_listen }} \
+    --database=paritydb \
+    --pruning=100 \
+    --keep-blocks=100 \
+    --execution=wasm \
+    --sync=warp \
+    --no-private-ip \
+    --telemetry-url="wss://telemetry.polkadot.io/submit/ 1" \
+    --no-mdns
+
+[Install]
+WantedBy=multi-user.target
