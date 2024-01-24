@@ -30,7 +30,7 @@
 
 - name: Download polimec binary
   ansible.builtin.get_url:
-    url: 'https://github.com/Polimec/polimec-binaries/releases/download/{{ version }}/polimec-parachain-node'
+    url: 'https://github.com/Polimec/polimec-node/releases/download/{{ version }}/polimec-parachain-node'
     dest: '/opt/{{ chain }}/polimec-parachain-node'
     mode: '0755'
     owner: polimec

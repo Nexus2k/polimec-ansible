@@ -4,7 +4,7 @@ chain: polimec
 docker_name: plmc_2
 p2p_listen: 30335
 p2p_relay_listen: 30336
-version: v0.3.1
+version: v0.3.2
 # Keep these bound to 127.0.0.1 you otherwise expose the ports to the public!
 rpc_listen: 9934
 rpc_relay_listen: 9937
